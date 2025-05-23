@@ -1,8 +1,8 @@
 #pragma once
 #include "Engine.h"
 #include <SDL3/SDL_render.h>
-
-
+#include <unordered_map>
+#include <memory>
 
 
 class SDLEngine :public Engine {
@@ -16,10 +16,14 @@ public:
 
 	void play(const std::string& sound) override;
 
+	~SDLEngine();
+
 private:
 
 	SDL_Renderer* renderer = nullptr;
 	const std::string images_subfolder;
+	std::unordered_map<std::string, SDL_Texture*> textures;
+	
 };
 
 

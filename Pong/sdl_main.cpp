@@ -8,13 +8,14 @@
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
-std::unique_ptr<Game> game;
+auto gameUpdateStepSecs = 10 / 1000.0f;
+Game game;
 
 
 /* This function runs once at startup. */
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 {   
-   
+    SDL_SetLogPriorities(SDL_LogPriority::SDL_LOG_PRIORITY_VERBOSE);
     SDL_SetAppMetadata("Example Renderer Clear", "1.0", "com.example.renderer-clear");
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -26,9 +27,10 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
-        
 
-    game.reset(new Game(new SDLEngine(renderer, "assets/images")));
+    SDL_SetRenderVSync(renderer, 1);
+        
+    game.init(new SDLEngine(renderer, "assets/images"));
 
     return SDL_APP_CONTINUE;  /* carry on with the program! */
 }
@@ -45,16 +47,26 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void* appstate)
 {
+    static Uint64 lastTicks = 0;     
+    auto currentTicks = SDL_GetTicks();
+    auto elapsedMillisecs = currentTicks - lastTicks; // how many milliseconds elapsed since last frame?
+    lastTicks = currentTicks;
+    auto elapsedSecs = elapsedMillisecs / 1000.0f;        
+    auto lagSecs = elapsedSecs;
 
-    const double now = ((double)SDL_GetTicks()) / 1000.0;  /* convert from milliseconds to seconds. */
-    /* choose the color for the frame we will draw. The sine wave trick makes it fade between colors smoothly. */
-    const float red = (float)(0.5 + 0.5 * SDL_sin(now));
-    const float green = (float)(0.5 + 0.5 * SDL_sin(now + SDL_PI_D * 2 / 3));
-    const float blue = (float)(0.5 + 0.5 * SDL_sin(now + SDL_PI_D * 4 / 3));
-    SDL_SetRenderDrawColorFloat(renderer, red, green, blue, SDL_ALPHA_OPAQUE_FLOAT);  /* new color, full alpha. */
+    for (; lagSecs >= gameUpdateStepSecs; lagSecs-=gameUpdateStepSecs)
+    {
+        game.update(gameUpdateStepSecs);
+    }
 
+    game.update(lagSecs);
+    lagSecs = 0;
+
+    SDL_SetRenderDrawColor(renderer, 230, 230, 230, SDL_ALPHA_OPAQUE);  /* new color, full alpha. */
     /* clear the window to the draw color. */
     SDL_RenderClear(renderer);
+
+    game.draw();
 
     /* put the newly-cleared rendering on the screen. */
     SDL_RenderPresent(renderer);

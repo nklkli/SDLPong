@@ -2,6 +2,5 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/Pong/FileContentIndex
-/.vs/Pong/v17
+/.vs/
 /bin

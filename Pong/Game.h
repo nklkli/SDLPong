@@ -54,6 +54,8 @@ public:
 		return y;
 	}
 
+	virtual ~Actor();
+
 	
 	const std::string image;
 
@@ -68,13 +70,15 @@ private:
 class Game {
 
 public:
-	Game(Engine * engine) :
-		engine{ engine }
-	{
+	Game() = default;
 
-	}
+	void init(Engine* e);
+
+	void update(float elapsedSeconds);
 
 	void draw() const;
+
+	~Game();
 
 private:
 	std::unique_ptr<Engine> engine;
