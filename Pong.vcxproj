@@ -74,11 +74,15 @@
     <IncludePath>$(ProjectDir)SDL\dll</IncludePath>
     <IncludePath>$(ProjectDir)SDL\include</IncludePath>
     <LibraryPath>$(ProjectDir)SDL\libs;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\obj_$(ShortProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(ProjectDir)SDL\dll</IncludePath>
     <IncludePath>$(ProjectDir)SDL\include</IncludePath>
     <LibraryPath>$(ProjectDir)SDL\libs;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\obj_$(ShortProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -144,7 +148,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="sdl_main.cpp" />
     <ClCompile Include="SDLEngine.cpp" />
   </ItemGroup>
