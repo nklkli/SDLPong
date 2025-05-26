@@ -7,11 +7,11 @@ module;
 
 export module SDLEngine;
 
-import Engine;
+import IEngine;
 
 
 export
-class SDLEngine :public Engine {
+class SDLEngine :public IEngine {
 
 	SDL_Renderer* renderer = nullptr;
 	const std::string images_subfolder;
@@ -22,9 +22,16 @@ public:
 
 	SDLEngine(SDL_Renderer* renderer, const std::string& images_subfolder);
 
-	void draw(const Image&, const Point&) const override;
+	void draw(const std::string& image, const Point& pos) const override
+	{
+		auto texture = textures.at(image);
+		SDL_FRect rect = { pos.x,pos.y, (float)texture->w, (float)texture->h };
+		SDL_RenderTexture(renderer, texture, NULL, &rect);
+	}
 
-	void play(const std::string& sound) override;
+	void play(const std::string& sound) const {
+
+	}
 
 	~SDLEngine() override;
 
@@ -62,20 +69,7 @@ SDLEngine::SDLEngine(SDL_Renderer* _renderer, const std::string& _images_subfold
 	SDL_EnumerateDirectory(images_folder.c_str(), callback, this);
 }
 
-void SDLEngine::draw(const Image& image, const Point& pos) const
-{
-	auto texture = textures.at(image.name);
-	SDL_FRect rect = { pos.x,pos.y, (float)texture->w, (float)texture->h };
-	SDL_RenderTexture(renderer, texture, NULL, &rect);
-}
 
-
-
-
-void SDLEngine::play(const std::string& sound)
-{
-
-}
 
 
 SDLEngine::~SDLEngine()

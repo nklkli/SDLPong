@@ -3,7 +3,8 @@ export module Pong;
 
 export import std;
 
-import Engine;
+import IEngine;
+import Game;
 
 export
 class Actor
@@ -66,26 +67,25 @@ public:
 
 };
 
-export 
-class PongGame
+export
+class PongGame : public IGame
 {
-	std::unique_ptr<Engine> engine;
-	const Image table = Image{ "table" };
+	std::unique_ptr<IEngine> engine;
+	
 
 public:
-	PongGame() = default;
+	explicit	PongGame(std::unique_ptr<IEngine> e) : engine{ std::move(e) }
+	{
 
-	void init(Engine* e) {
-		engine.reset(e);
-		//table = Image(Point{ 0,0 }, "table");
 	}
+
 
 	void update(float elapsedSeconds) {
 
 	}
 
 	void draw() const {
-		engine->draw(table, Point{ 0,0 });
+		engine->draw("table", { 0,0 });
 	}
 
 	~PongGame() {
