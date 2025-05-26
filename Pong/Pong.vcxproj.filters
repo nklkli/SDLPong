@@ -24,25 +24,17 @@
     <ClCompile Include="src\sdl_main.cpp">
       <Filter>Source Files\SDL</Filter>
     </ClCompile>
-    <ClCompile Include="src\SDLEngine.cpp">
-      <Filter>Source Files\SDL</Filter>
+    <ClCompile Include="src\Pong.ixx">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game.h">
-      <Filter>Header Files</Filter>
+    <ClCompile Include="src\Engine.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDLEngine.ixx">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="boing.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\SDLEngine.h">
-      <Filter>Header Files\SDL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Engine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

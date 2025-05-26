@@ -1,15 +1,15 @@
 #define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
-#include "SDLEngine.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <memory>
-#include "Game.h"
 
+import Pong;
+import SDLEngine;
 
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 auto gameUpdateStepSecs = 10 / 1000.0f;
-Game game;
+PongGame game;
 
 /* This function runs once at startup. */
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
