@@ -97,7 +97,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="IGame.ixx" />
+    <ClCompile Include="src\IGame.ixx" />
     <ClCompile Include="src\IEngine.ixx" />
     <ClCompile Include="src\Pong.ixx" />
     <ClCompile Include="src\SDLEngine.ixx" />
