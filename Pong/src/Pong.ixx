@@ -78,13 +78,13 @@ public:
 	}
 
 
-	void update(float elapsedSeconds) {
+	void update(float elapsedSeconds) override {
 
 	}
 
 
 
-	void draw() const {
+	void draw() const override {
 		engine->draw("table", { 0,0 });
 	}
 
