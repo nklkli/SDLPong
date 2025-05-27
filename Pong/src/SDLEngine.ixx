@@ -7,80 +7,72 @@ module;
 
 export module SDLEngine;
 
+import std;
 import IEngine;
 
+bool load_image(SDL_Renderer* renderer, const char* , const char* , SDL_Texture** );
 
-export
-class SDLEngine :public IEngine {
-
-	SDL_Renderer* renderer = nullptr;
-	const std::string images_subfolder;
-	std::unordered_map<std::string, SDL_Texture*> textures;
-
-
-public:
-
-	SDLEngine(SDL_Renderer* renderer, const std::string& images_subfolder);
-
-	void draw(const std::string& image, const Point& pos) const override
-	{
-		auto texture = textures.at(image);
-		SDL_FRect rect = { pos.x,pos.y, (float)texture->w, (float)texture->h };
-		SDL_RenderTexture(renderer, texture, NULL, &rect);
-	}
-
-	void play(const std::string& sound) const {
-
-	}
-
-	~SDLEngine() override;
-
-
-
-};
-
-module : private;
-
-static bool load_image(SDL_Renderer* renderer, const char* dirname, const char* fname, SDL_Texture** result);
-
-
-std::string get_filename_without_extension(const std::string fname_with_extension) {
+std::string get_filename_without_extension(const std::string& fname_with_extension)
+{
 	auto dot_pos = fname_with_extension.find_last_of(".");
 	return fname_with_extension.substr(0, dot_pos);
 }
 
+export
+class SDLEngine :public IEngine {
+	SDL_Renderer* renderer = nullptr;
+	const std::string images_subfolder;
+	std::unordered_map<std::string, SDL_Texture*> textures;
 
-SDLEngine::SDLEngine(SDL_Renderer* _renderer, const std::string& _images_subfolder) :
-	renderer{ _renderer },
-	images_subfolder{ _images_subfolder }
-{
-	auto callback = [](void* userdata, const char* dirname, const char* fname)
-		{
-			SDLEngine* self = static_cast<SDLEngine*>(userdata);
-			SDL_Texture* texture_ptr;
-			if (load_image(self->renderer, dirname, fname, &texture_ptr)) {
-				self->textures[get_filename_without_extension(fname)] = texture_ptr;
-				SDL_Log("SDLEngine: texture  loaded '%s' '%s'", dirname, fname);
-			}
-			return SDL_ENUM_CONTINUE;
-		};
+public:
 
-	auto images_folder = std::format("{}{}", SDL_GetBasePath(), _images_subfolder);
-	SDL_EnumerateDirectory(images_folder.c_str(), callback, this);
-}
+	SDLEngine(SDL_Renderer* _renderer, const std::string& _images_subfolder) :
+		renderer{ _renderer },
+		images_subfolder{ _images_subfolder }
+	{
+		auto callback = [](void* userdata, const char* dirname, const char* fname)
+			{
+				SDLEngine* self = static_cast<SDLEngine*>(userdata);
+				SDL_Texture* texture_ptr;
+				if (load_image(self->renderer, dirname, fname, &texture_ptr)) {
+					self->textures[get_filename_without_extension(fname)] = texture_ptr;
+					SDL_Log("SDLEngine: texture  loaded '%s' '%s'", dirname, fname);
+				}
+				return SDL_ENUM_CONTINUE;
+			};
 
-
-
-
-SDLEngine::~SDLEngine()
-{
-	SDL_Log("SDLEngine dtor:");
-	for (const auto& p : textures) {
-		SDL_DestroyTexture(p.second);
-		SDL_Log("\tTexture '%s' destroyed.", p.first.c_str());
+		auto images_folder = std::format("{}{}", SDL_GetBasePath(), _images_subfolder);
+		SDL_EnumerateDirectory(images_folder.c_str(), callback, this);
 	}
-}
 
+
+
+	void draw(const std::string& image, const Point& pos) const override
+	{
+		auto texture = textures.at(image);
+		SDL_FRect rect = { pos.x, pos.y, (float)texture->w, (float)texture->h };
+		SDL_RenderTexture(renderer, texture, NULL, &rect);
+	}
+
+
+
+	void play(const std::string& sound) const {
+	}
+
+
+
+	~SDLEngine() override
+	{
+		SDL_Log("SDLEngine dtor:");
+		for (const auto& p : textures) {
+			SDL_DestroyTexture(p.second);
+			SDL_Log("\tTexture '%s' destroyed.", p.first.c_str());
+		}
+	}
+};
+
+
+module : private;
 
 
 bool load_image(SDL_Renderer* renderer, const char* dirname, const char* fname, SDL_Texture** result) {
@@ -115,4 +107,3 @@ bool load_image(SDL_Renderer* renderer, const char* dirname, const char* fname, 
 
 	return true;
 }
-

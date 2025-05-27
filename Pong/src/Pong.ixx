@@ -9,12 +9,11 @@ import Game;
 export
 class Actor
 {
-	float x{ 0 };
-	float y{ 0 };
+	Point position;
 
 public:
-	Actor(const std::string& image, float _x, float _y) :
-		x{ _x }, y{ _y }, image{ image }
+	Actor(const std::string& image, const Point& p) :
+		position{p}, image{image}
 	{
 	}
 
@@ -28,32 +27,27 @@ public:
 	};
 
 	inline void go_up(float steps) {
-		y -= steps;
+		position.y -= steps;
 	}
 
 	inline void go_down(float steps) {
-		y += steps;
+		position.y += steps;
 	}
 
 	inline void go_left(float steps) {
-		x -= steps;
+		position.x -= steps;
 	}
 
 	inline void go_right(float steps) {
-		x += steps;
+		position.x += steps;
 	}
 
-	inline void change_position(float x, float y) {
-		this->x = x;
-		this->y = y;
+	inline void change_position(const Point& newPosition) {
+		position = newPosition;
 	}
 
-	inline float position_x() const {
-		return x;
-	}
-
-	inline float position_y() const {
-		return y;
+	inline const Point get_position() const {
+		return position;
 	}
 
 	virtual ~Actor()
@@ -67,6 +61,9 @@ public:
 
 };
 
+
+
+
 export
 class PongGame : public IGame
 {
@@ -74,6 +71,7 @@ class PongGame : public IGame
 	
 
 public:
+
 	explicit	PongGame(std::unique_ptr<IEngine> e) : engine{ std::move(e) }
 	{
 
@@ -84,9 +82,13 @@ public:
 
 	}
 
+
+
 	void draw() const {
 		engine->draw("table", { 0,0 });
 	}
+
+
 
 	~PongGame() {
 		std::print("Game dtor\n");
