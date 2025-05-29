@@ -12,6 +12,7 @@ SDL_Renderer* renderer = nullptr;
 auto gameUpdateStepSecs = 10 / 1000.0f;
 GamePong game;
 unique_ptr<Engine> engine(nullptr);
+Input input = {};
 
 /* This function runs once at startup. */
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
@@ -58,12 +59,16 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 	{
 		return SDL_APP_SUCCESS; /* end the program, reporting success to the OS. */
 	}
-
-	if (event->type == SDL_EVENT_MOUSE_WHEEL) {
-		SDL_Log("x= %.0f  y= %.0f", event->wheel.x, event->wheel.y);
+		
+	switch (event->type)
+	{
+	case SDL_EVENT_MOUSE_WHEEL:
+		input.MouseWheelY = event->wheel.y;
+		break;
+	default:
+		break;
 	}
-
-	game.handleInput(engine.get());
+	
 
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }
@@ -75,6 +80,8 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void* appstate)
 {
+	game.handleInput(input);
+
 	static Uint64 lastTicks = 0;
 	auto currentTicks = SDL_GetTicks();
 	auto elapsedMillisecs = currentTicks - lastTicks; // how many milliseconds elapsed since last frame?
@@ -95,6 +102,8 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 	game.draw(engine.get());
 
 	SDL_RenderPresent(renderer);
+
+	input = {};
 
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }

@@ -4,13 +4,6 @@ import Point;
 using namespace std;
 
 
-export
-class Input 
-{
-	virtual float GetMouseWheelMoveY() =0;
-};
-
-
 export 
 class Engine
 {
@@ -20,3 +13,6 @@ public:
 	virtual void play(const string& sound) const = 0;  
 	virtual ~Engine() =default;
 };
+
+
+

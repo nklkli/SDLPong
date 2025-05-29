@@ -15,7 +15,7 @@ public:
 	// Inherited via Game
 	void update(Engine* const engine , float elapsedSeconds) override;
 	void draw(Engine* const engine) const override;
-	void handleInput(Engine* const engine) override;
+	void handleInput(const Input&) override;
 };
 
 
@@ -24,6 +24,7 @@ public:
 	// Inherited via GameState
 	void draw(Engine* const engine) const override;
 	~GameStateMenu();
+	void handleInput(const Input&) override;
 };
 
 
@@ -36,7 +37,7 @@ public:
 	// Inherited via Game
 	void update(Engine* const engine, float elapsedSeconds) override;
 	void draw(Engine* const engine) const override;
-	void handleInput(Engine* const engine) override;
+	void handleInput(const Input&) override;
 	~GamePong();
 private:
 	unique_ptr<GameState> state_ =  nullptr ;
@@ -48,6 +49,7 @@ private:
 
 
 module :private;
+import Input;
 
 
 
@@ -64,11 +66,16 @@ inline void GameState::draw(Engine* const engine) const
 {
 }
 
-inline void GameState::handleInput(Engine* const engine)
+inline void GameState::handleInput(const Input& input)
 {
+	
 }
 
-
+inline void GameStateMenu::handleInput(const Input& input)
+{
+	if(input.MouseWheelY!=0)
+		println("GameStateMenu; mouse wheel: {:.0f}", input.MouseWheelY);
+}
 
 // Inherited via Game
 inline void GamePong::update(Engine* const engine, float elapsedSeconds)
@@ -81,8 +88,9 @@ inline void GamePong::draw(Engine* const engine) const
 	state_->draw(engine);
 }
 
-inline void GamePong::handleInput(Engine*const engine)
+inline void GamePong::handleInput(const Input& input)
 {
+	state_->handleInput(input);
 }
 
 GamePong::~GamePong()

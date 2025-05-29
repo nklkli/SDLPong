@@ -42,6 +42,9 @@
     <ClCompile Include="src\EngineSDL.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Input.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="boing.py" />

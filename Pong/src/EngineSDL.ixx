@@ -24,15 +24,6 @@ public:
 };
 
 
-export
-class InputSDL :public Input {
-public:
-	InputSDL(SDL_Event* event);
-	// Inherited via Input
-	float GetMouseWheelMoveY() override;
-private:
-	float mouseWheelMoveY_ = 0;
-};
 
 
 module : private;
@@ -121,20 +112,3 @@ EngineSDL::~EngineSDL()
 	}
 }
 
-InputSDL::InputSDL(SDL_Event* event)
-{
-	switch (event->type)
-	{
-	case SDL_EVENT_MOUSE_WHEEL:
-		mouseWheelMoveY_ = event->wheel.y;
-		break;
-	default:
-		break;
-	}
-}
-
-// Inherited via Input
-inline float InputSDL::GetMouseWheelMoveY()
-{
-	return 0.0f;
-}
