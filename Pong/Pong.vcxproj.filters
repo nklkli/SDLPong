@@ -24,13 +24,22 @@
     <ClCompile Include="src\sdl_main.cpp">
       <Filter>Source Files\SDL</Filter>
     </ClCompile>
-    <ClCompile Include="src\Pong.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SDLEngine.ixx">
+    <ClCompile Include="Actor.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Point.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GamePong.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineSDL.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

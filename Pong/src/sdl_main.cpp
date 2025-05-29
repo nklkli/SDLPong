@@ -1,18 +1,17 @@
 #define SDL_MAIN_USE_CALLBACKS 1 /* use the callbacks instead of main() */
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-
 import std;
 import Pong;
-import SDLEngine;
+import EngineSDL;
 import Game;
+using namespace std;
 
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
 auto gameUpdateStepSecs = 10 / 1000.0f;
-std::unique_ptr<IGame> game;
-
-
+GamePong game;
+unique_ptr<Engine> engine(nullptr);
 
 /* This function runs once at startup. */
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
@@ -37,8 +36,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 
 	try
 	{
-		auto engine = std::make_unique<SDLEngine>(renderer, "assets/images");
-		game = std::make_unique<PongGame>(std::move(engine));
+		engine.reset(new EngineSDL{ renderer, "assets/images" });
 	}
 	catch (const std::string& err)
 	{
@@ -60,6 +58,13 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 	{
 		return SDL_APP_SUCCESS; /* end the program, reporting success to the OS. */
 	}
+
+	if (event->type == SDL_EVENT_MOUSE_WHEEL) {
+		SDL_Log("x= %.0f  y= %.0f", event->wheel.x, event->wheel.y);
+	}
+
+	game.handleInput(engine.get());
+
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }
 
@@ -77,8 +82,8 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 	auto elapsedSecs = elapsedMillisecs / 1000.0f;
 	auto lagSecs = elapsedSecs;
 
-	while (lagSecs > 0) {
-		game->update(gameUpdateStepSecs);
+	while (lagSecs > 0) {		
+		game.update(engine.get(), gameUpdateStepSecs);
 		lagSecs -= gameUpdateStepSecs;
 		lagSecs = SDL_max(0, lagSecs);
 	}
@@ -87,7 +92,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 
 	SDL_RenderClear(renderer);
 
-	game->draw();
+	game.draw(engine.get());
 
 	SDL_RenderPresent(renderer);
 
