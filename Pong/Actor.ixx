@@ -17,7 +17,7 @@ public:
 	inline void go_left(float steps);
 	inline void go_right(float steps);
 	inline void change_position(const Point& newPosition);
-	inline const Point get_position() const;
+	inline Point get_position() const;
 	virtual ~Actor();
 };
 
@@ -56,7 +56,7 @@ inline void Actor::change_position(const Point& newPosition) {
 	position = newPosition;
 }
 
-inline const Point Actor::get_position() const {
+inline  Point Actor::get_position() const {
 	return position;
 }
 

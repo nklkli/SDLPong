@@ -5,6 +5,7 @@ import std;
 import Pong;
 import EngineSDL;
 import Game;
+import Input;
 using namespace std;
 
 SDL_Window* window = nullptr;
@@ -49,7 +50,7 @@ SDL_AppResult SDL_AppInit(void** , int argc, char* argv[])
 }
 
 
-/* This function runs when a new event (mouse input, keypresses, etc) occurs. */
+/* This function runs when a new event (mouse input, keypresses, etc.) occurs. */
 SDL_AppResult SDL_AppEvent(void* , SDL_Event* event)
 {
 	if (event->type == SDL_EVENT_QUIT ||
@@ -82,9 +83,9 @@ SDL_AppResult SDL_AppIterate(void* )
 
 	static Uint64 lastTicks = 0;
 	auto currentTicks = SDL_GetTicks();
-	auto elapsedMillisecs = currentTicks - lastTicks; // how many milliseconds elapsed since last frame?
+	auto elapsed_milliseconds = currentTicks - lastTicks; // how many milliseconds elapsed since last frame?
 	lastTicks = currentTicks;
-	auto elapsedSecs = elapsedMillisecs / 1000.0f;
+	auto elapsedSecs = elapsed_milliseconds / 1000.0f;
 	auto lagSecs = elapsedSecs;
 
 	while (lagSecs > 0) {

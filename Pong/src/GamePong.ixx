@@ -1,28 +1,31 @@
 export module Pong;
 import Engine;
 import Game;
+import Input;
 import std;
 using namespace std;
 
 export class GamePong;
 
-class GameState :Game {
+class GameState : Game
+{
 protected:
-	GamePong* game_{ nullptr };
+	GamePong* game_{nullptr};
 
 public:
 	void setContext(GamePong*);
 	// Inherited via Game
-	void update(Engine* const engine , float elapsedSeconds) override;
-	void draw(Engine* const engine) const override;
+	void update(Engine*  engine, float elapsedSeconds) override;
+	void draw(Engine*  engine) const override;
 	void handleInput(const Input&) override;
 };
 
 
-class GameStateMenu final :public GameState {
+class GameStateMenu final : public GameState
+{
 public:
 	// Inherited via GameState
-	void draw(Engine* const engine) const override;
+	void draw(Engine*  engine) const override;
 	~GameStateMenu() override;
 	void handleInput(const Input&) override;
 };
@@ -34,25 +37,23 @@ public:
 	friend class GameStateMenu;
 	GamePong();
 	// Inherited via Game
-	void update(Engine* const engine, float elapsedSeconds) override;
-	void draw(Engine* const engine) const override;
+	void update(Engine*  engine, float elapsedSeconds) override;
+	void draw(Engine*  engine) const override;
 	void handleInput(const Input&) override;
 	~GamePong() override;
+
 private:
-	unique_ptr<GameState> state_ =  nullptr ;
+	unique_ptr<GameState> state_ = nullptr;
 	void TransitionTo(unique_ptr<GameState> newState);
-
 };
-
-
 
 
 module :private;
 import Input;
 
 
-
-void GameState::setContext(GamePong* g) {
+void GameState::setContext(GamePong* g)
+{
 	game_ = g;
 }
 
@@ -67,12 +68,11 @@ inline void GameState::draw(Engine* const engine) const
 
 inline void GameState::handleInput(const Input& input)
 {
-	
 }
 
 inline void GameStateMenu::handleInput(const Input& input)
 {
-	if(input.MouseWheelY!=0)
+	if (input.MouseWheelY != 0)
 		println("GameStateMenu; mouse wheel: {:.0f}", input.MouseWheelY);
 }
 
@@ -83,7 +83,7 @@ inline void GamePong::update(Engine* const engine, float elapsedSeconds)
 
 inline void GamePong::draw(Engine* const engine) const
 {
-	engine->draw("table", { 0,0 });
+	engine->draw("table", {0, 0});
 	state_->draw(engine);
 }
 
@@ -114,9 +114,10 @@ GamePong::GamePong()
 // Inherited via GameState
 inline void GameStateMenu::draw(Engine* const engine) const
 {
-	engine->drawText("MENU STATE", { 20,20 });
+	engine->drawText("MENU STATE", {20, 20});
 }
 
-inline GameStateMenu::~GameStateMenu() {
+inline GameStateMenu::~GameStateMenu()
+{
 	println("GameStateMenu dtor");
 }
