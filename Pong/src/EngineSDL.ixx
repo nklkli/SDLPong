@@ -3,10 +3,10 @@ module;
 #include <SDL3/SDL_filesystem.h>
 #include <SDL3/SDL_log.h>
 #include <SDL_image.h>
-#include <SDL3/SDL_events.h>
 export module EngineSDL;
 import std;
-import Engine;
+import Point;
+export import Engine;
 using namespace std;
 
 
@@ -19,7 +19,7 @@ public:
 	EngineSDL(SDL_Renderer* _renderer, const string& _images_subfolder);
 	void draw(const string& image, const Point& pos) const override;
 	void drawText(const string& text, const Point& pos) const override;
-	void play(const string& sound) const;
+	void play(const string& sound) const override;
 	~EngineSDL() override;
 };
 
@@ -37,7 +37,7 @@ string get_filename_without_extension(const string& fname_with_extension)
 
 
 bool load_image(SDL_Renderer* renderer, const char* dirname, const char* fname, SDL_Texture** result) {
-	char* path = NULL;
+	char* path = nullptr;
 	SDL_asprintf(&path, "%s/%s", dirname, fname);
 	SDL_PathInfo pathInfo;
 	if (!SDL_GetPathInfo(path, &pathInfo)) { //  image file not found
@@ -56,7 +56,9 @@ bool load_image(SDL_Renderer* renderer, const char* dirname, const char* fname, 
 	SDL_Surface* surface = IMG_Load(path);
 	SDL_free(path);
 	if (!surface) {
-		throw format("SDLEngine: Couldn't create SDL_Surface from file '{}'. Reason: \n{}", path, SDL_GetError());
+		throw format("SDLEngine: Couldn't create SDL_Surface from file '{}'. Reason: \n{}", 
+			path, 
+			SDL_GetError());
 	}
 
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -91,8 +93,8 @@ EngineSDL::EngineSDL(SDL_Renderer* _renderer, const string& _images_subfolder) :
 void EngineSDL::draw(const string& image, const Point& pos) const
 {
 	auto texture = textures.at(image);
-	SDL_FRect rect = { pos.x, pos.y, (float)texture->w, (float)texture->h };
-	SDL_RenderTexture(renderer, texture, NULL, &rect);
+	SDL_FRect rect = { pos.x, pos.y, static_cast<float>(texture->w), static_cast<float>(texture->h) };
+	SDL_RenderTexture(renderer, texture, nullptr, &rect);
 }
 
 void EngineSDL::drawText(const string& text, const Point& pos) const

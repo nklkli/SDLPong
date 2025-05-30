@@ -15,33 +15,33 @@ unique_ptr<Engine> engine(nullptr);
 Input input = {};
 
 /* This function runs once at startup. */
-SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
+SDL_AppResult SDL_AppInit(void** , int argc, char* argv[])
 {
-
-	SDL_SetLogPriorities(SDL_LogPriority::SDL_LOG_PRIORITY_VERBOSE);
-	SDL_SetAppMetadata("Example Renderer Clear", "1.0", "com.example.renderer-clear");
-
-	if (!SDL_Init(SDL_INIT_VIDEO))
-	{
-		SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
-		return SDL_APP_FAILURE;
-	}
-
-	if (!SDL_CreateWindowAndRenderer("examples/renderer/clear", 640, 480, 0, &window, &renderer))
-	{
-		SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
-		return SDL_APP_FAILURE;
-	}
-
-	SDL_SetRenderVSync(renderer, 1);
-
 	try
 	{
-		engine.reset(new EngineSDL{ renderer, "assets/images" });
+		SDL_SetLogPriorities(SDL_LogPriority::SDL_LOG_PRIORITY_VERBOSE);
+		SDL_SetAppMetadata("Example Renderer Clear", "1.0", "com.example.renderer-clear");
+
+		if (!SDL_Init(SDL_INIT_VIDEO))
+		{
+			throw format("SDL_INIT_VIDEO SDL:\n{}", SDL_GetError());
+		}
+
+		if (!SDL_CreateWindowAndRenderer("examples/renderer/clear", 640, 480, 0, &window, &renderer))
+		{
+			throw format("SDL_CreateWindowAndRenderer:\n{}", SDL_GetError());
+		}
+
+		if (!SDL_SetRenderVSync(renderer, 1))
+		{
+			throw format("SDL_SetRenderVSync failed:\n{}", SDL_GetError());
+		}
+
+		engine.reset(new EngineSDL{renderer, "assets/images"});
 	}
 	catch (const std::string& err)
 	{
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "ERROR", err.c_str(), window);
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "ERROR", err.c_str(), nullptr);
 		return SDL_APP_FAILURE;
 	}
 
@@ -49,17 +49,15 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 }
 
 
-
-
 /* This function runs when a new event (mouse input, keypresses, etc) occurs. */
-SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
+SDL_AppResult SDL_AppEvent(void* , SDL_Event* event)
 {
 	if (event->type == SDL_EVENT_QUIT ||
 		(event->type == SDL_EVENT_KEY_DOWN && event->key.scancode == SDL_SCANCODE_ESCAPE))
 	{
 		return SDL_APP_SUCCESS; /* end the program, reporting success to the OS. */
 	}
-		
+
 	switch (event->type)
 	{
 	case SDL_EVENT_MOUSE_WHEEL:
@@ -68,7 +66,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 	default:
 		break;
 	}
-	
+
 
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }
@@ -78,7 +76,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 
 
 /* This function runs once per frame, and is the heart of the program. */
-SDL_AppResult SDL_AppIterate(void* appstate)
+SDL_AppResult SDL_AppIterate(void* )
 {
 	game.handleInput(input);
 
@@ -89,7 +87,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 	auto elapsedSecs = elapsedMillisecs / 1000.0f;
 	auto lagSecs = elapsedSecs;
 
-	while (lagSecs > 0) {		
+	while (lagSecs > 0) {
 		game.update(engine.get(), gameUpdateStepSecs);
 		lagSecs -= gameUpdateStepSecs;
 		lagSecs = SDL_max(0, lagSecs);
@@ -112,7 +110,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 
 
 /* This function runs once at shutdown. */
-void SDL_AppQuit(void* appstate, SDL_AppResult result)
+void SDL_AppQuit(void* , SDL_AppResult result)
 {
 	/* SDL will clean up the window/renderer for us. */
 }

@@ -4,7 +4,7 @@ import Game;
 import std;
 using namespace std;
 
-class GamePong;
+export class GamePong;
 
 class GameState :Game {
 protected:
@@ -19,17 +19,16 @@ public:
 };
 
 
-class GameStateMenu :public GameState {
+class GameStateMenu final :public GameState {
 public:
 	// Inherited via GameState
 	void draw(Engine* const engine) const override;
-	~GameStateMenu();
+	~GameStateMenu() override;
 	void handleInput(const Input&) override;
 };
 
 
-export
-class GamePong : public Game
+class GamePong final : public Game
 {
 public:
 	friend class GameStateMenu;
@@ -38,7 +37,7 @@ public:
 	void update(Engine* const engine, float elapsedSeconds) override;
 	void draw(Engine* const engine) const override;
 	void handleInput(const Input&) override;
-	~GamePong();
+	~GamePong() override;
 private:
 	unique_ptr<GameState> state_ =  nullptr ;
 	void TransitionTo(unique_ptr<GameState> newState);
