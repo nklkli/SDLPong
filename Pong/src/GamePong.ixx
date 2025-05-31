@@ -1,7 +1,7 @@
 export module Pong;
 import Engine;
 import Game;
-import Input;
+import Command;
 import std;
 using namespace std;
 
@@ -15,9 +15,16 @@ protected:
 public:
 	void setContext(GamePong*);
 	// Inherited via Game
-	void update(Engine*  engine, float elapsedSeconds) override;
+	void update(Command& command, Engine& engine, float elapsedSeconds) override;
 	void draw(Engine*  engine) const override;
-	void handleInput(const Input&) override;
+};
+
+class GameStateGameOver : public GameState
+{
+public:
+	inline void draw(Engine* engine) const override;
+	inline void update(Command& command, Engine& engine, float elapsedSeconds) override;
+	~GameStateGameOver() override;
 };
 
 
@@ -27,29 +34,27 @@ public:
 	// Inherited via GameState
 	void draw(Engine*  engine) const override;
 	~GameStateMenu() override;
-	void handleInput(const Input&) override;
+	inline void update(Command& command, Engine& engine, float elapsedSeconds) override;
 };
 
 
 class GamePong final : public Game
 {
 public:
-	friend class GameStateMenu;
 	GamePong();
 	// Inherited via Game
-	void update(Engine*  engine, float elapsedSeconds) override;
+	void update(Command& command, Engine& engine, float elapsedSeconds) override;
 	void draw(Engine*  engine) const override;
-	void handleInput(const Input&) override;
 	~GamePong() override;
+	void TransitionTo(unique_ptr<GameState> newState);
 
 private:
 	unique_ptr<GameState> state_ = nullptr;
-	void TransitionTo(unique_ptr<GameState> newState);
 };
 
 
 module :private;
-import Input;
+
 
 
 void GameState::setContext(GamePong* g)
@@ -58,27 +63,41 @@ void GameState::setContext(GamePong* g)
 }
 
 // Inherited via Game
-inline void GameState::update(Engine* const engine, float elapsedSeconds)
+inline void GameState::update(Command& command, Engine& engine, float elapsedSeconds)
 {
+
 }
 
 inline void GameState::draw(Engine* const engine) const
 {
 }
 
-inline void GameState::handleInput(const Input& input)
+
+void GameStateGameOver::draw(Engine* engine) const
 {
+	engine->draw("over", { 0,0 });
+	engine->drawText("GAME OVER", { 20,20 });
 }
 
-inline void GameStateMenu::handleInput(const Input& input)
+void GameStateGameOver::update(Command& command, Engine& engine, float elapsedSeconds)
 {
-	if (input.MouseWheelY != 0)
-		println("GameStateMenu; mouse wheel: {:.0f}", input.MouseWheelY);
+	if (command.NextState)
+	{
+		command.NextState = false;
+		game_->TransitionTo(make_unique<GameStateMenu>());
+	}
 }
+
+GameStateGameOver::~GameStateGameOver()
+{
+	println("GameOver dtor");
+}
+
 
 // Inherited via Game
-inline void GamePong::update(Engine* const engine, float elapsedSeconds)
+inline void GamePong::update(Command& command, Engine& engine, float elapsedSeconds)
 {
+	state_->update(command, engine, elapsedSeconds);
 }
 
 inline void GamePong::draw(Engine* const engine) const
@@ -87,10 +106,6 @@ inline void GamePong::draw(Engine* const engine) const
 	state_->draw(engine);
 }
 
-inline void GamePong::handleInput(const Input& input)
-{
-	state_->handleInput(input);
-}
 
 GamePong::~GamePong()
 {
@@ -120,4 +135,13 @@ inline void GameStateMenu::draw(Engine* const engine) const
 inline GameStateMenu::~GameStateMenu()
 {
 	println("GameStateMenu dtor");
+}
+
+void GameStateMenu::update(Command& command, Engine& engine, float elapsedSeconds)
+{
+	if (command.NextState)
+	{
+		command.NextState = false;
+		game_->TransitionTo(make_unique<GameStateGameOver>());
+	}
 }
