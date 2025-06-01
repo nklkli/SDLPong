@@ -21,20 +21,15 @@ public:
 	virtual ~Actor();
 };
 
-
 module :private;
-
 
 Actor::Actor(const string& image, const Point& p) :
 	position{ p }, image{ image }
 {
 }
 
-
 void Actor::update(float time) {
 }
-
-
 
 inline void Actor::go_up(float steps) {
 	position.y -= steps;

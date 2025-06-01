@@ -98,14 +98,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor.ixx" />
-    <ClCompile Include="Command.ixx" />
+    <ClCompile Include="Input.ixx" />
     <ClCompile Include="Point.ixx" />
-    <ClCompile Include="SDLEventToCommand.ixx" />
+    <ClCompile Include="SDLSoundManager.ixx" />
+    <ClCompile Include="SDLEventToInput.ixx" />
+    <ClCompile Include="SDLTextureManager.ixx" />
     <ClCompile Include="src\Game.ixx" />
     <ClCompile Include="src\Engine.ixx" />
     <ClCompile Include="src\GamePong.ixx" />
-    <ClCompile Include="src\EngineSDL.ixx" />
+    <ClCompile Include="src\SDLEngine.ixx" />
     <ClCompile Include="src\sdl_main.cpp" />
+    <ClCompile Include="Util.ixx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="boing.py" />

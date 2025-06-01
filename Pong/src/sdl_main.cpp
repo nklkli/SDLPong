@@ -3,10 +3,10 @@
 #include <SDL3/SDL_main.h>
 import std;
 import Pong;
-import EngineSDL;
+import SDLEngine;
 import Game;
-import Command;
-import SDLEventToCommand;
+import Input;
+import SDLEventToInput;
 using namespace std;
 
 struct AppState
@@ -15,16 +15,14 @@ struct AppState
 	SDL_Renderer* renderer = nullptr;
 	float gameUpdateStepSecs = 10 / 1000.0f;
 	GamePong game;
-	unique_ptr<Engine> engine{ nullptr };
-	Command command = {};
 };
 
 /* This function runs once at startup. */
-SDL_AppResult SDL_AppInit(void** appstate , int argc, char* argv[])
+SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 {
 	try
 	{
-		auto app= new AppState();
+		auto app = new AppState();
 		*appstate = app;
 
 		SDL_SetLogPriorities(SDL_LogPriority::SDL_LOG_PRIORITY_VERBOSE);
@@ -33,17 +31,17 @@ SDL_AppResult SDL_AppInit(void** appstate , int argc, char* argv[])
 			"1.0",
 			"com.example.renderer-clear");
 
-		if (!SDL_Init(SDL_INIT_VIDEO))
+		if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO))
 		{
 			throw format("SDL_INIT_VIDEO SDL:\n{}", SDL_GetError());
 		}
 
 		if (!SDL_CreateWindowAndRenderer(
-			"examples/renderer/clear", 
-			640, 
-			480, 
-			0, 
-		    &app->window, 
+			"examples/renderer/clear",
+			app->game.WIDTH,
+			app->game.HEIGHT,
+			0,
+			&app->window,
 			&app->renderer))
 		{
 			throw format("SDL_CreateWindowAndRenderer:\n{}", SDL_GetError());
@@ -54,7 +52,10 @@ SDL_AppResult SDL_AppInit(void** appstate , int argc, char* argv[])
 			throw format("SDL_SetRenderVSync failed:\n{}", SDL_GetError());
 		}
 
-		app->engine.reset(new EngineSDL{app->renderer, "assets/images"});
+		auto images_folder = format("{}{}", SDL_GetBasePath(), "assets/images");
+		auto sound_folder = format("{}{}", SDL_GetBasePath(), "assets/sounds");
+	    app->game.engine.reset(new EngineSDL{ app->renderer, images_folder, sound_folder });
+
 	}
 	catch (const std::string& err)
 	{
@@ -65,12 +66,9 @@ SDL_AppResult SDL_AppInit(void** appstate , int argc, char* argv[])
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }
 
-
-
 /* This function runs when a new event (mouse input, keypresses, etc.) occurs. */
-SDL_AppResult SDL_AppEvent(void* appstate , SDL_Event* event)
+SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 {
-
 	if (event->type == SDL_EVENT_QUIT ||
 		(event->type == SDL_EVENT_KEY_DOWN && event->key.scancode == SDL_SCANCODE_ESCAPE))
 	{
@@ -79,24 +77,10 @@ SDL_AppResult SDL_AppEvent(void* appstate , SDL_Event* event)
 
 	AppState& app = *static_cast<AppState*>(appstate);
 
-	handleInput(event, app.command);
-
-	/*switch (event->type)
-	{
-	case SDL_EVENT_MOUSE_WHEEL:
-		input.MouseWheelY = event->wheel.y;
-		break;
-	default:
-		break;
-	}*/
-
+	app.game.handleInput(mapSDLEventToInput(event));
 
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }
-
-
-
-
 
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void* appstate)
@@ -111,7 +95,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 	auto lag_secs = elapsed_secs;
 
 	while (lag_secs > 0) {
-		appState.game.update(appState.command, *appState.engine.get(), appState.gameUpdateStepSecs);
+		appState.game.update( appState.gameUpdateStepSecs);
 		lag_secs -= appState.gameUpdateStepSecs;
 		lag_secs = SDL_max(0, lag_secs);
 	}
@@ -120,22 +104,18 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 
 	SDL_RenderClear(appState.renderer);
 
-	appState.game.draw(appState.engine.get());
+	appState.game.draw();
 
 	SDL_RenderPresent(appState.renderer);
-
-	appState.command = {};
 
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }
 
-
-
-
 /* This function runs once at shutdown. */
 void SDL_AppQuit(void* appstate, SDL_AppResult result)
 {
-	AppState *app = static_cast<AppState*>(appstate);
+	AppState* app = static_cast<AppState*>(appstate);
 	delete app;
+	SDL_Quit();
 	/* SDL will clean up the window/renderer for us. */
 }
