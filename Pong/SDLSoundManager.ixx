@@ -1,20 +1,30 @@
 module;
 #include <SDL_mixer.h>
+#include <typeinfo>
 #include <SDL3/SDL_log.h>
 export module SDLSoundManager;
 import std;
 using namespace std;
 
- void DestroyChunk(Mix_Chunk* chunk)
+
+/// <summary>
+/// Loads and destroys SDL_mixer's Mix_Chunk.
+/// </summary>
+class Sound
 {
-	Mix_FreeChunk(chunk);
-	SDL_Log("Destroy sound");
-}
+	const string name_;
+	Mix_Chunk* chunk_{ nullptr };
+public:
+	Sound(const string& path);
+	operator Mix_Chunk* () const;
+	const string& GetName() const;
+	~Sound();
+};
 
 export
 class SDLSoundManager
 {
-	unordered_map<string, unique_ptr<Mix_Chunk, void(*)(Mix_Chunk*)>>  mix_chunks_;
+	unordered_map<string, unique_ptr<Sound>>  sounds_;
 	int num_channels_{ 16 };
 
 public:
@@ -26,15 +36,45 @@ public:
 
 
 module :private;
-import Util;
 
 
 
-Mix_Chunk* load_sound(const char* path);
+
+Sound::Sound(const string& path) :
+	name_{ path }
+{
+	chunk_ = Mix_LoadWAV(path.c_str());
+	if (!chunk_) {
+		throw  format("{}: Couldn't load sound file '{}';\n{}",
+			typeid(*this).name(),
+			path,
+			SDL_GetError());
+	}
+
+	chunk_->volume = 20;
+
+	SDL_Log("%s: loaded '%s'",
+		typeid(*this).name(),
+		path.c_str());
+}
+
+Sound::operator Mix_Chunk*() const
+{ return chunk_; }
+
+const string& Sound::GetName() const
+{ return name_; }
+
+Sound::~Sound()
+{
+	Mix_FreeChunk(chunk_);
+	SDL_Log("%s: Sound destroyed: %s",
+		typeid(*this).name(),
+		name_.c_str());
+}
 
 SDLSoundManager::SDLSoundManager(const string& sound_folder)
 {
-	SDL_Log("SDLSoundManager: SDL_MIXER VERSION %d.%d.%d", 
+	SDL_Log("SDLSoundManager: SDL_MIXER VERSION %d.%d.%d",
 		SDL_MIXER_MAJOR_VERSION,
 		SDL_MINOR_VERSION,
 		SDL_MIXER_MICRO_VERSION);
@@ -51,61 +91,39 @@ SDLSoundManager::SDLSoundManager(const string& sound_folder)
 			// ignore everything in 'sound_folder' except normal files.
 			continue;
 		}
-		auto path = Util::utf16ToUtf8(entry.path().generic_wstring());
-		auto filename_no_extension = entry.path().stem().string();
 
-		unique_ptr<Mix_Chunk, void(*)(Mix_Chunk*)> p{load_sound(path.c_str()), DestroyChunk};
-		
-		mix_chunks_.emplace(
+		auto filename_no_extension = entry.path().stem().string();
+		auto path = entry.path().string();
+
+		sounds_.emplace(
 			filename_no_extension,
-			move(p)
+			make_unique<Sound>(path)
 		);
 
-		SDL_Log("\tSound  loaded '%s'", path.c_str());
+
 	}
 }
 
 
 
-void SDLSoundManager::play(const string& sound) const
+void SDLSoundManager::play(const string& sound_name) const
 {
-	auto mix_chunk = mix_chunks_.at(sound).get();
-	Mix_PlayChannel(-1, mix_chunk, 0);
-
-	//int channel_playing = Mix_PlayChannel(-1, mix_chunk, 0);
-		/*	SDL_LogInfo(LOG_CATEGORY, "Playing '%s' on channel %d.", soundFile->path, channel_playing);
-		}
-		else {
-			SDL_LogWarn(LOG_CATEGORY, "Sound '%s' not loaded.", name);
-		}*/
+	auto& sound = *sounds_.at(sound_name).get();
+	Mix_PlayChannel(-1, sound, 0);
+	SDL_Log("%s: Playing sound file '%s'",
+		typeid(*this).name(),
+		sound.GetName().c_str());
 }
 
 
 SDLSoundManager::~SDLSoundManager()
 {
 	SDL_Log("SDLSoundManager dtor");
-
-	
-	/*for (auto& [sound_name, chunk]:mix_chunks_)
-	{
-		Mix_FreeChunk(chunk);
-		SDL_Log("\tSound destroyed '%s'", sound_name.c_str());
-	}*/
-	/*for (const auto& p : mix_chunks_)
-	{
-		Mix_FreeChunk(p.second);
-		SDL_Log("\tSound destroyed '%s'", p.first.c_str());
-	}*/
-//	Mix_CloseAudio();
-	//Mix_Quit();
+	sounds_.clear();
+	Mix_CloseAudio();
+	Mix_Quit();
 }
 
 
-Mix_Chunk* load_sound(const char* path) {
-	Mix_Chunk* mix_chunk = Mix_LoadWAV(path);
-	if (!mix_chunk) {
-		throw  format("Couldn't load sound file '{}';\n%s",
-			path, SDL_GetError());
-	}
-	return mix_chunk;
-}
+
+

@@ -19,6 +19,7 @@ public:
 	void draw() const override;
 	string getName() const override = 0;
 	void handleInput(const Input& input) override;
+
 };
 
 class GameStatePlay : public GameState
@@ -55,10 +56,10 @@ public:
 class GamePong final : public Game
 {
 public:
-	inline static unique_ptr<Engine> engine;
+	unique_ptr<Engine> engine_;
 	static constexpr int WIDTH{ 800 };
 	static constexpr int HEIGHT{ 480 };
-	GamePong();
+	GamePong(unique_ptr<Engine> engine);
 	// Inherited via Game
 	void update(float elapsedSeconds) override;
 	void draw() const override;
@@ -103,7 +104,7 @@ void GameStatePlay::update(float elapsedSeconds)
 
 void GameStatePlay::draw() const
 {
-	game_->engine->drawText(getName(), { 20,20 });
+	game_->engine_->drawText(getName(), { 20,20 });
 }
 
 GameStatePlay::~GameStatePlay()
@@ -119,8 +120,8 @@ void GameStatePlay::handleInput(const Input& input)
 
 void GameStateGameOver::draw() const
 {
-	game_->engine->draw("over", { 0,0 });
-	game_->engine->drawText(getName(), { 20,20 });
+	game_->engine_->draw("over", { 0,0 });
+	game_->engine_->drawText(getName(), { 20,20 });
 }
 
 void GameStateGameOver::update(float elapsedSeconds)
@@ -133,6 +134,11 @@ GameStateGameOver::~GameStateGameOver()
 	println("{} dtor", GameStateGameOver::getName());
 }
 
+GamePong::GamePong(unique_ptr<Engine> engine):engine_(move(engine))
+{
+	TransitionTo(make_unique<GameStateMenu>());
+}
+
 // Inherited via Game
 inline void GamePong::update(float elapsedSeconds)
 {
@@ -141,7 +147,7 @@ inline void GamePong::update(float elapsedSeconds)
 
 inline void GamePong::draw() const
 {
-	engine->draw("table", { 0, 0 });
+	engine_->draw("table", { 0, 0 });
 	state_->draw();
 }
 
@@ -174,10 +180,8 @@ void GamePong::handleInput(const Input& input)
 }
 
 
-GamePong::GamePong()
-{
-	TransitionTo(make_unique<GameStateMenu>());
-}
+
+
 
 
 void GameStateGameOver::handleInput(const Input& input)
@@ -189,8 +193,8 @@ void GameStateGameOver::handleInput(const Input& input)
 inline void GameStateMenu::draw() const
 {
 	auto image = format("menu{}", game_->GetNumplayers() - 1);
-	game_->engine->draw(image, { 0,0 });
-	game_->engine->drawText(getName(), { 20, 20 });
+	game_->engine_->draw(image, { 0,0 });
+	game_->engine_->drawText(getName(), { 20, 20 });
 }
 
 inline GameStateMenu::~GameStateMenu()
@@ -209,11 +213,11 @@ void GameStateMenu::handleInput(const Input& input)
 	if (input.ArrowUpPressed && game_->GetNumplayers() == 2)
 	{
 		game_->SetNumplayers(1);
-		game_->engine->play("up");
+		game_->engine_->play("up");
 	}
 	else if (input.ArrawDownPressed && game_->GetNumplayers() == 1)
 	{
 		game_->SetNumplayers(2);
-		game_->engine->play("down");
+		game_->engine_->play("down");
 	}
 }

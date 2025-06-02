@@ -16,9 +16,28 @@ namespace Util {
 
 	// Convert a UTF-16 (wchar_t) string to UTF-8
 	std::string utf16ToUtf8(const std::wstring& utf16Str) {
-		int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, utf16Str.c_str(), -1, nullptr, 0, nullptr, nullptr);
+
+		int sizeNeeded = WideCharToMultiByte(
+			CP_UTF8,
+			0,
+			utf16Str.c_str(), 
+			-1, 
+			nullptr, 
+			0, 
+			nullptr,
+			nullptr);
+
 		std::string utf8Str(sizeNeeded, 0);
-		WideCharToMultiByte(CP_UTF8, 0, utf16Str.c_str(), -1, &utf8Str[0], sizeNeeded, nullptr, nullptr);
+
+		WideCharToMultiByte(CP_UTF8, 
+			0, 
+			utf16Str.c_str(), 
+			-1,
+			&utf8Str[0], 
+			sizeNeeded, 
+			nullptr, 
+			nullptr);
+
 		return utf8Str;
 	}
 
