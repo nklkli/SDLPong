@@ -101,6 +101,7 @@ xcopy $(SolutionDir)assets $(OutputPath)assets  /E /D /Y
   <ItemGroup>
     <ClCompile Include="Actor.ixx" />
     <ClCompile Include="Input.ixx" />
+    <ClCompile Include="Paddle.ixx" />
     <ClCompile Include="Point.ixx" />
     <ClCompile Include="SDLSoundManager.ixx" />
     <ClCompile Include="SDLEventToInput.ixx" />

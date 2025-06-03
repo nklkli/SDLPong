@@ -21,7 +21,9 @@ public:
 	virtual ~Actor();
 };
 
+
 module :private;
+
 
 Actor::Actor(const string& image, const Point& p) :
 	position{ p }, image{ image }
