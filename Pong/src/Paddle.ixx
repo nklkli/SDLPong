@@ -75,6 +75,7 @@ float Paddle::ai_move()
 	// To decide where we want to go, we first check to see how far we are from the ball.
 	float x_distance = abs(game_.ball.get_position().x - position.x);
 
+
 	// If the ball is far away, we move towards the centre of the screen(HALF_HEIGHT),
 	// on the basis that we don't yet know whether the ball will be in the top or
 	// bottom half of the screen when it reaches our position on the X axis.

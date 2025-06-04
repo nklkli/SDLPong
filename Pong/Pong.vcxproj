@@ -99,10 +99,12 @@ xcopy $(SolutionDir)assets $(OutputPath)assets  /E /D /Y
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SDLGameAdapterImpl.cpp" />
     <ClCompile Include="src\Actor.ixx" />
     <ClCompile Include="src\Input.ixx" />
     <ClCompile Include="src\Paddle.ixx" />
     <ClCompile Include="src\Point.ixx" />
+    <ClCompile Include="src\SDLGameAdapter.ixx" />
     <ClCompile Include="src\SDLSoundManager.ixx" />
     <ClCompile Include="src\SDLEventToInput.ixx" />
     <ClCompile Include="src\SDLTextureManager.ixx" />

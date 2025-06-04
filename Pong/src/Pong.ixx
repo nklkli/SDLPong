@@ -1,7 +1,7 @@
 export module Pong;
 import Engine;
-import Game;
 import Actor;
+export import Game;
 export import Input;
 import std;
 using namespace std;
@@ -12,6 +12,7 @@ class GameState : Game
 {
 protected:
 	Pong* game_{ nullptr };
+	float foo{0};
 
 public:
 	void setContext(Pong*);
