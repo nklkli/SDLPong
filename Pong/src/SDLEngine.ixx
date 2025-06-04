@@ -3,7 +3,7 @@ module;
 #include <SDL3/SDL_log.h>
 export module SDLEngine;
 import std;
-import Point;
+export import  Point;
 import SDLTextureManager;
 import SDLSoundManager;
 export import Engine;
@@ -20,6 +20,8 @@ public:
 	void drawText(const string& text, const Point& pos) const override;
 	void play(const string& sound) const override;
 	~EngineSDL() override;
+	float abs(float) const override;
+	float min(float, float) const override;
 };
 
 
@@ -54,6 +56,20 @@ void EngineSDL::play(const string& sound) const {
 EngineSDL::~EngineSDL()
 {
 	SDL_Log("SDLEngine dtor:");
+}
+
+float EngineSDL::abs(float x) const
+{
+	if (x >= 0)
+		return x;
+	else
+		return x * -1;
+
+}
+
+float EngineSDL::min(float x, float y) const
+{
+	return SDL_min(x, y);
 }
 
 

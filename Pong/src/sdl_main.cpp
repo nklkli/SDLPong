@@ -40,8 +40,8 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 	
 		if (!SDL_CreateWindowAndRenderer(
 			"examples/renderer/clear",
-		   	GamePong::WIDTH,
-			GamePong::HEIGHT,
+		   	static_cast<int>(Pong::WIDTH),
+			static_cast<int>(Pong::HEIGHT),
 			0,
 			&app->window,
 			&app->renderer))
@@ -63,7 +63,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 			images_folder,
 			sound_folder);
 	    app->game.reset(
-			new GamePong(move(engine))
+			new Pong(move(engine))
 		);
 
 	}

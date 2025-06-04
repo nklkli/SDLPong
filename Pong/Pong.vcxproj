@@ -99,19 +99,19 @@ xcopy $(SolutionDir)assets $(OutputPath)assets  /E /D /Y
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Actor.ixx" />
-    <ClCompile Include="Input.ixx" />
-    <ClCompile Include="Paddle.ixx" />
-    <ClCompile Include="Point.ixx" />
-    <ClCompile Include="SDLSoundManager.ixx" />
-    <ClCompile Include="SDLEventToInput.ixx" />
-    <ClCompile Include="SDLTextureManager.ixx" />
+    <ClCompile Include="src\Actor.ixx" />
+    <ClCompile Include="src\Input.ixx" />
+    <ClCompile Include="src\Paddle.ixx" />
+    <ClCompile Include="src\Point.ixx" />
+    <ClCompile Include="src\SDLSoundManager.ixx" />
+    <ClCompile Include="src\SDLEventToInput.ixx" />
+    <ClCompile Include="src\SDLTextureManager.ixx" />
     <ClCompile Include="src\Game.ixx" />
     <ClCompile Include="src\Engine.ixx" />
-    <ClCompile Include="src\GamePong.ixx" />
+    <ClCompile Include="src\Pong.ixx" />
     <ClCompile Include="src\SDLEngine.ixx" />
     <ClCompile Include="src\sdl_main.cpp" />
-    <ClCompile Include="Util.ixx" />
+    <ClCompile Include="src\Util.ixx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="boing.py" />

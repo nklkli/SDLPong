@@ -1,19 +1,20 @@
 export module Pong;
 import Engine;
 import Game;
-import Input;
+import Actor;
+export import Input;
 import std;
 using namespace std;
 
-export class GamePong;
+export class Pong;
 
 class GameState : Game
 {
 protected:
-	GamePong* game_{ nullptr };
+	Pong* game_{ nullptr };
 
 public:
-	void setContext(GamePong*);
+	void setContext(Pong*);
 	// Inherited via Game
 	void update(float elapsedSeconds) override;
 	void draw() const override;
@@ -53,21 +54,31 @@ public:
 	void handleInput(const Input& input) override;;
 };
 
-class GamePong final : public Game
+class Pong final : public Game
 {
-public:
+
 	unique_ptr<Engine> engine_;
-	static constexpr int WIDTH{ 800 };
-	static constexpr int HEIGHT{ 480 };
-	GamePong(unique_ptr<Engine> engine);
+public:
+	static constexpr float WIDTH{ 800 };
+	static constexpr float HEIGHT{ 480 };
+	static constexpr float HALF_HEIGHT = HEIGHT / 2.0f;
+	static constexpr float HALF_WIDTH = WIDTH / 2.0f;
+	static constexpr float PADDLE_LEFT_X = 40;
+	static constexpr float PADDLE_RIGHT_X = 760;
+
+	float ai_offset{ 0 };
+	Actor ball{};
+
+	Pong(unique_ptr<Engine> engine);
+	const Engine& GetEngine() const;
 	// Inherited via Game
 	void update(float elapsedSeconds) override;
 	void draw() const override;
-	~GamePong() override;
+	~Pong() override;
 	void TransitionTo(unique_ptr<GameState> newState);
 	void SetNumplayers(int numPlayers);
 	int GetNumplayers() const { return num_players_; }
-	string getName() const override { return "GamePong"; }
+	string getName() const override { return "Pong"; }
 	void handleInput(const Input& input) override;
 
 private:
@@ -77,7 +88,26 @@ private:
 
 module :private;
 
-void GameState::setContext(GamePong* g)
+
+
+//def p1_controls() :
+//	move = 0
+//	if keyboard.z or keyboard.down :
+//		move = PLAYER_SPEED
+//		elif keyboard.a or keyboard.up :
+//		move = -PLAYER_SPEED
+//		return move
+//
+//
+//	def p2_controls() :
+//	move = 0
+//	if keyboard.m :
+//		move = PLAYER_SPEED
+//		elif keyboard.k :
+//		move = -PLAYER_SPEED
+//		return move
+
+void GameState::setContext(Pong* g)
 {
 	game_ = g;
 }
@@ -104,7 +134,7 @@ void GameStatePlay::update(float elapsedSeconds)
 
 void GameStatePlay::draw() const
 {
-	game_->engine_->drawText(getName(), { 20,20 });
+	game_->GetEngine().drawText(getName(), { 20,20 });
 }
 
 GameStatePlay::~GameStatePlay()
@@ -120,8 +150,8 @@ void GameStatePlay::handleInput(const Input& input)
 
 void GameStateGameOver::draw() const
 {
-	game_->engine_->draw("over", { 0,0 });
-	game_->engine_->drawText(getName(), { 20,20 });
+	game_->GetEngine().draw("over", { 0,0 });
+	game_->GetEngine().drawText(getName(), { 20,20 });
 }
 
 void GameStateGameOver::update(float elapsedSeconds)
@@ -134,31 +164,36 @@ GameStateGameOver::~GameStateGameOver()
 	println("{} dtor", GameStateGameOver::getName());
 }
 
-GamePong::GamePong(unique_ptr<Engine> engine):engine_(move(engine))
+Pong::Pong(unique_ptr<Engine> engine):engine_(move(engine))
 {
 	TransitionTo(make_unique<GameStateMenu>());
 }
 
+const Engine& Pong::GetEngine() const
+{
+	return *engine_.get();
+}
+
 // Inherited via Game
-inline void GamePong::update(float elapsedSeconds)
+inline void Pong::update(float elapsedSeconds)
 {
 	state_->update(elapsedSeconds);
 }
 
-inline void GamePong::draw() const
+inline void Pong::draw() const
 {
 	engine_->draw("table", { 0, 0 });
 	state_->draw();
 }
 
-GamePong::~GamePong()
+Pong::~Pong()
 {
 	println("{} dtor", getName());
 }
 
-void GamePong::TransitionTo(unique_ptr<GameState> newState)
+void Pong::TransitionTo(unique_ptr<GameState> newState)
 {
-	println("GamePong.TransitionTo: {} ---> {}",
+	println("Pong.TransitionTo: {} ---> {}",
 		state_ == nullptr ? "None" : state_->getName(),
 		newState->getName()
 	);
@@ -168,13 +203,13 @@ void GamePong::TransitionTo(unique_ptr<GameState> newState)
 }
 
 
-void GamePong::SetNumplayers(int numPlayers)
+void Pong::SetNumplayers(int numPlayers)
 {
 	num_players_ = numPlayers;
 }
 
 
-void GamePong::handleInput(const Input& input)
+void Pong::handleInput(const Input& input)
 {
 	state_->handleInput(input);
 }
@@ -193,8 +228,8 @@ void GameStateGameOver::handleInput(const Input& input)
 inline void GameStateMenu::draw() const
 {
 	auto image = format("menu{}", game_->GetNumplayers() - 1);
-	game_->engine_->draw(image, { 0,0 });
-	game_->engine_->drawText(getName(), { 20, 20 });
+	game_->GetEngine().draw(image, { 0,0 });
+	game_->GetEngine().drawText(getName(), { 20, 20 });
 }
 
 inline GameStateMenu::~GameStateMenu()
@@ -213,11 +248,11 @@ void GameStateMenu::handleInput(const Input& input)
 	if (input.ArrowUpPressed && game_->GetNumplayers() == 2)
 	{
 		game_->SetNumplayers(1);
-		game_->engine_->play("up");
+		game_->GetEngine().play("up");
 	}
 	else if (input.ArrawDownPressed && game_->GetNumplayers() == 1)
 	{
 		game_->SetNumplayers(2);
-		game_->engine_->play("down");
+		game_->GetEngine().play("down");
 	}
 }
