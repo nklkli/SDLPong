@@ -8,18 +8,19 @@ using namespace std;
 
 export class Pong;
 
-class GameState : Game
+
+
+class GameState : public Game
 {
 protected:
 	Pong* game_{ nullptr };
-	float foo{0};
 
 public:
 	void setContext(Pong*);
 	// Inherited via Game
 	void update(float elapsedSeconds) override;
 	void draw() const override;
-	string getName() const override = 0;
+
 	void handleInput(const Input& input) override;
 
 };
@@ -30,7 +31,6 @@ public:
 	inline void update(float elapsedSeconds) override;
 	inline void draw() const override;
 	~GameStatePlay() override;
-	string getName() const override { return "StatePlay"; }
 	void handleInput(const Input& input) override;
 };
 
@@ -40,7 +40,6 @@ public:
 	inline void draw() const override;
 	inline void update(float elapsedSeconds) override;
 	~GameStateGameOver() override;
-	string getName() const override { return "StateOver"; }
 	void handleInput(const Input& input) override;;
 };
 
@@ -51,7 +50,6 @@ public:
 	void draw() const override;
 	~GameStateMenu() override;
 	inline void update(float elapsedSeconds) override;
-	string getName() const override { return "StateMenu"; }
 	void handleInput(const Input& input) override;;
 };
 
@@ -79,7 +77,6 @@ public:
 	void TransitionTo(unique_ptr<GameState> newState);
 	void SetNumplayers(int numPlayers);
 	int GetNumplayers() const { return num_players_; }
-	string getName() const override { return "Pong"; }
 	void handleInput(const Input& input) override;
 
 private:
@@ -162,11 +159,12 @@ void GameStateGameOver::update(float elapsedSeconds)
 
 GameStateGameOver::~GameStateGameOver()
 {
-	println("{} dtor", GameStateGameOver::getName());
+	println("{} dtor", getName());
 }
 
 Pong::Pong(unique_ptr<Engine> engine):engine_(move(engine))
 {
+	name_="hey";
 	TransitionTo(make_unique<GameStateMenu>());
 }
 

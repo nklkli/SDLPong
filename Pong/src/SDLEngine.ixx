@@ -10,16 +10,16 @@ export import Engine;
 using namespace std;
 
 export
-class EngineSDL :public Engine {
+class SDLEngine :public Engine {
 	unique_ptr<SDLTextureManager> textureManager_{ nullptr };
 	unique_ptr<SDLSoundManager> soundManager_{ nullptr };
 	SDL_Renderer* renderer_ = nullptr;
 public:
-	EngineSDL(SDL_Renderer* _renderer, const string& _images_subfolder, const string& sound_folder);
+	SDLEngine(SDL_Renderer* _renderer, const string& _images_subfolder, const string& sound_folder);
 	void draw(const string& image, const Point& pos) const override;
 	void drawText(const string& text, const Point& pos) const override;
 	void play(const string& sound) const override;
-	~EngineSDL() override;
+	~SDLEngine() override;
 	float abs(float) const override;
 	float min(float, float) const override;
 };
@@ -30,7 +30,7 @@ module : private;
 
 
 
-EngineSDL::EngineSDL(SDL_Renderer* renderer,
+SDLEngine::SDLEngine(SDL_Renderer* renderer,
 	const string& images_folder,
 	const string& sound_folder) :
 	renderer_(renderer)
@@ -39,26 +39,26 @@ EngineSDL::EngineSDL(SDL_Renderer* renderer,
 	soundManager_.reset(new SDLSoundManager(sound_folder));
 }
 
-void EngineSDL::draw(const string& image, const Point& pos) const
+void SDLEngine::draw(const string& image, const Point& pos) const
 {
 	textureManager_->render(image, pos.x, pos.y);
 }
 
-void EngineSDL::drawText(const string& text, const Point& pos) const
+void SDLEngine::drawText(const string& text, const Point& pos) const
 {
 	SDL_RenderDebugText(renderer_, pos.x, pos.y, text.c_str());
 }
 
-void EngineSDL::play(const string& sound) const {
+void SDLEngine::play(const string& sound) const {
 	soundManager_->play(sound);
 }
 
-EngineSDL::~EngineSDL()
+SDLEngine::~SDLEngine()
 {
 	SDL_Log("SDLEngine dtor:");
 }
 
-float EngineSDL::abs(float x) const
+float SDLEngine::abs(float x) const
 {
 	if (x >= 0)
 		return x;
@@ -67,7 +67,7 @@ float EngineSDL::abs(float x) const
 
 }
 
-float EngineSDL::min(float x, float y) const
+float SDLEngine::min(float x, float y) const
 {
 	return SDL_min(x, y);
 }

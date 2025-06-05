@@ -1,7 +1,9 @@
+module;
 #define SDL_MAIN_USE_CALLBACKS /* use the callbacks instead of main() */
 #include <SDL_mixer.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+export module Main;
 import SDLGameAdapter;
 using namespace std;
 
@@ -12,7 +14,7 @@ struct AppState
 	float gameUpdateStepSecs = 10 / 1000.0f;
 };
 
-SDLGameAdapter* game;
+
 
 /* This function runs once at startup. */
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
@@ -64,11 +66,12 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 			engine))
 		);*/
 
-	 game->init(app->renderer, 
+	 SDLGameAdapter::init(app->renderer, 
 			images_folder, 
 			sound_folder);
 
-	 SDL_SetWindowSize(app->window, game->Get_WINDOWS_WIDTH(),game->Get_WINDOWS_HEIGHT());
+	 SDL_SetWindowSize(app->window, 
+		 SDLGameAdapter::Get_WINDOWS_WIDTH(), SDLGameAdapter::Get_WINDOWS_HEIGHT());
 	}
 	catch (const std::string& err)
 	{
@@ -90,7 +93,7 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 
 	AppState& app = *static_cast<AppState*>(appstate);
 
- game->handleInput(event);
+	SDLGameAdapter::handleInput(event);
 
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }
@@ -109,7 +112,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 
 	while (lag_secs > 0) {
 		//appState.game->update( appState.gameUpdateStepSecs);
-		game->update(SDL_min(lag_secs, appState.gameUpdateStepSecs));
+		SDLGameAdapter::update(SDL_min(lag_secs, appState.gameUpdateStepSecs));
 		lag_secs -= appState.gameUpdateStepSecs;
 		lag_secs = SDL_max(0, lag_secs);
 	}
@@ -120,7 +123,7 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 
 	/*appState.game->draw();*/
 
-	game->draw();
+	SDLGameAdapter::draw();
 
 	SDL_RenderPresent(appState.renderer);
 
@@ -132,6 +135,7 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result)
 {
 	AppState* app = static_cast<AppState*>(appstate);	
 	delete app;
+	SDLGameAdapter::quit();
 	SDL_Quit();
 	/* SDL will clean up the window/renderer for us. */
 }

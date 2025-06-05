@@ -27,22 +27,43 @@
     <ClCompile Include="src\Engine.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Actor.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Point.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Game.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\GamePong.ixx">
+    <ClCompile Include="src\SDLGameAdapterImpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\EngineSDL.ixx">
+    <ClCompile Include="src\Actor.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Input.ixx">
+    <ClCompile Include="src\Input.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Paddle.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Point.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDLGameAdapter.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDLSoundManager.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDLEventToInput.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDLTextureManager.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Pong.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SDLEngine.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Util.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
