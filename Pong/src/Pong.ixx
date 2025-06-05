@@ -1,3 +1,5 @@
+module;
+#include <SDL3/SDL_events.h>
 export module Pong;
 import Engine;
 import Actor;
@@ -21,7 +23,7 @@ public:
 	void update(float elapsedSeconds) override;
 	void draw() const override;
 
-	void handleInput(const Input& input) override;
+	void handleInput(SDL_Event*) override;
 
 };
 
@@ -31,7 +33,7 @@ public:
 	inline void update(float elapsedSeconds) override;
 	inline void draw() const override;
 	~GameStatePlay() override;
-	void handleInput(const Input& input) override;
+	void handleInput(SDL_Event*) override;
 };
 
 class GameStateGameOver : public GameState
@@ -40,7 +42,7 @@ public:
 	inline void draw() const override;
 	inline void update(float elapsedSeconds) override;
 	~GameStateGameOver() override;
-	void handleInput(const Input& input) override;;
+	void handleInput(SDL_Event*) override;;
 };
 
 class GameStateMenu final : public GameState
@@ -50,7 +52,7 @@ public:
 	void draw() const override;
 	~GameStateMenu() override;
 	inline void update(float elapsedSeconds) override;
-	void handleInput(const Input& input) override;;
+	void handleInput(SDL_Event*) override;;
 };
 
 class Pong final : public Game
@@ -58,6 +60,7 @@ class Pong final : public Game
 
 	unique_ptr<Engine> engine_;
 public:
+	static constexpr float gameUpdateStepSecs = 10 / 1000.0f;
 	static constexpr float WIDTH{ 800 };
 	static constexpr float HEIGHT{ 480 };
 	static constexpr float HALF_HEIGHT = HEIGHT / 2.0f;
@@ -77,7 +80,7 @@ public:
 	void TransitionTo(unique_ptr<GameState> newState);
 	void SetNumplayers(int numPlayers);
 	int GetNumplayers() const { return num_players_; }
-	void handleInput(const Input& input) override;
+	void handleInput(SDL_Event* event) override;
 
 private:
 	unique_ptr<GameState> state_ = nullptr;
@@ -120,7 +123,7 @@ inline void GameState::draw() const
 }
 
 
-void GameState::handleInput(const Input& input)
+void GameState::handleInput(SDL_Event* event)
 {
 }
 
@@ -141,7 +144,7 @@ GameStatePlay::~GameStatePlay()
 }
 
 
-void GameStatePlay::handleInput(const Input& input)
+void GameStatePlay::handleInput(SDL_Event* event)
 {
 }
 
@@ -162,9 +165,9 @@ GameStateGameOver::~GameStateGameOver()
 	println("{} dtor", getName());
 }
 
-Pong::Pong(unique_ptr<Engine> engine):engine_(move(engine))
+Pong::Pong(unique_ptr<Engine> engine) :engine_(move(engine))
 {
-	name_="hey";
+	name_ = "hey";
 	TransitionTo(make_unique<GameStateMenu>());
 }
 
@@ -208,17 +211,16 @@ void Pong::SetNumplayers(int numPlayers)
 }
 
 
-void Pong::handleInput(const Input& input)
+void Pong::handleInput(SDL_Event* event)
 {
-	state_->handleInput(input);
+	state_->handleInput(event);
 }
 
 
 
 
 
-
-void GameStateGameOver::handleInput(const Input& input)
+void GameStateGameOver::handleInput(SDL_Event* event)
 {
 }
 
@@ -242,16 +244,19 @@ void GameStateMenu::update(float elapsedSeconds)
 }
 
 
-void GameStateMenu::handleInput(const Input& input)
+void GameStateMenu::handleInput(SDL_Event* event)
 {
-	if (input.ArrowUpPressed && game_->GetNumplayers() == 2)
-	{
-		game_->SetNumplayers(1);
-		game_->GetEngine().play("up");
+	if (event->type == SDL_EVENT_KEY_DOWN) {
+		if (event->key.scancode == SDL_SCANCODE_DOWN && game_->GetNumplayers() == 1)
+		{
+			game_->SetNumplayers(2);
+			game_->GetEngine().play("up");
+		}
+		else if (event->key.scancode == SDL_SCANCODE_UP && game_->GetNumplayers() == 2)
+		{
+			game_->SetNumplayers(1);
+			game_->GetEngine().play("down");
+		}
 	}
-	else if (input.ArrawDownPressed && game_->GetNumplayers() == 1)
-	{
-		game_->SetNumplayers(2);
-		game_->GetEngine().play("down");
-	}
+
 }

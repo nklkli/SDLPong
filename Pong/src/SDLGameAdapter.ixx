@@ -10,7 +10,7 @@ namespace SDLGameAdapter
 	void quit();
 	int Get_WINDOWS_WIDTH();
 	int Get_WINDOWS_HEIGHT();
-	void update(float);
+	void update();
 	void handleInput(SDL_Event*);
 	void draw();
 }

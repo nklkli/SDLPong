@@ -15,7 +15,7 @@ class SDLEngine :public Engine {
 	unique_ptr<SDLSoundManager> soundManager_{ nullptr };
 	SDL_Renderer* renderer_ = nullptr;
 public:
-	SDLEngine(SDL_Renderer* _renderer, const string& _images_subfolder, const string& sound_folder);
+	SDLEngine(SDL_Renderer* _renderer, const string& images_subfolder, const string& sound_folder);
 	void draw(const string& image, const Point& pos) const override;
 	void drawText(const string& text, const Point& pos) const override;
 	void play(const string& sound) const override;

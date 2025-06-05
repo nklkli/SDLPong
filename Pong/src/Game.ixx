@@ -1,3 +1,5 @@
+module;
+#include <SDL3/SDL_events.h>
 export module Game;
 import Engine;
 import std;
@@ -12,7 +14,7 @@ protected:
 public:
 	virtual void update(float elapsedSeconds) = 0;
 	virtual void draw() const = 0;
-	virtual void handleInput(const Input& input) = 0;
+	virtual void handleInput(SDL_Event * event ) = 0;
 	string getName() const
 	{
 		auto className = typeid(*this).name();
