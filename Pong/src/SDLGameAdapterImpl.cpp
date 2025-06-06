@@ -2,9 +2,9 @@ module;
 #include <SDL3/SDL_stdinc.h>
 #include <SDL3/SDL_timer.h>
 module SDLGameAdapter;
-using namespace  std;
 import Pong;
 import SDLEngine;
+using std::string,std::unique_ptr;
 
 unique_ptr<Pong> pong{ nullptr };
 

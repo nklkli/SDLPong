@@ -1,5 +1,6 @@
 module;
 #include <SDL3/SDL_events.h>
+#include  <typeinfo>
 export module Game;
 import Engine;
 import std;

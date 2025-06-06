@@ -4,7 +4,7 @@ module;
 #include <SDL3/SDL_log.h>
 export module SDLSoundManager;
 import std;
-using namespace std;
+using std::string, std::filesystem::directory_iterator, std::unordered_map, std::unique_ptr, std::format;
 
 
 /// <summary>
@@ -58,11 +58,15 @@ Sound::Sound(const string& path) :
 		path.c_str());
 }
 
-Sound::operator Mix_Chunk*() const
-{ return chunk_; }
+Sound::operator Mix_Chunk* () const
+{
+	return chunk_;
+}
 
 const string& Sound::GetName() const
-{ return name_; }
+{
+	return name_;
+}
 
 Sound::~Sound()
 {
@@ -85,7 +89,7 @@ SDLSoundManager::SDLSoundManager(const string& sound_folder)
 	int numChannels = Mix_AllocateChannels(num_channels_);
 	SDL_Log("Audio channels: %d", numChannels);
 
-	for (const auto& entry : filesystem::directory_iterator(sound_folder)) {
+	for (const auto& entry : directory_iterator(sound_folder)) {
 		if (!entry.is_regular_file())
 		{
 			// ignore everything in 'sound_folder' except normal files.

@@ -7,7 +7,7 @@ export import  Point;
 import SDLTextureManager;
 import SDLSoundManager;
 export import Engine;
-using namespace std;
+using std::string, std::unique_ptr;
 
 export
 class SDLEngine :public Engine {

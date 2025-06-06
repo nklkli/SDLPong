@@ -6,7 +6,8 @@ import Actor;
 export import Game;
 export import Input;
 import std;
-using namespace std;
+using std::string, std::unique_ptr, std::move, std::format, std::make_unique;
+
 
 export class Pong;
 
@@ -246,17 +247,18 @@ void GameStateMenu::update(float elapsedSeconds)
 
 void GameStateMenu::handleInput(SDL_Event* event)
 {
-	if (event->type == SDL_EVENT_KEY_DOWN) {
-		if (event->key.scancode == SDL_SCANCODE_DOWN && game_->GetNumplayers() == 1)
-		{
-			game_->SetNumplayers(2);
-			game_->GetEngine().play("up");
-		}
-		else if (event->key.scancode == SDL_SCANCODE_UP && game_->GetNumplayers() == 2)
-		{
-			game_->SetNumplayers(1);
-			game_->GetEngine().play("down");
-		}
+	if (event->type != SDL_EVENT_KEY_DOWN) return;
+	
+	if (event->key.scancode == SDL_SCANCODE_DOWN && game_->GetNumplayers() == 1)
+	{
+		game_->SetNumplayers(2);
+		game_->GetEngine().play("up");
 	}
+	else if (event->key.scancode == SDL_SCANCODE_UP && game_->GetNumplayers() == 2)
+	{
+		game_->SetNumplayers(1);
+		game_->GetEngine().play("down");
+	}
+
 
 }

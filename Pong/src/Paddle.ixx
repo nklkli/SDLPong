@@ -1,7 +1,8 @@
 export module Paddle;
 export import Actor;
 import Pong;
-using namespace std;
+import std;
+using std::function, std::println;
 
 class Paddle : public Actor
 {
