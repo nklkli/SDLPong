@@ -1,21 +1,20 @@
 module;
 #include <SDL3/SDL_events.h>
 #include  <typeinfo>
-export module Game;
+export module Entity;
 import Engine;
 import std;
-import Input;
 using namespace std;
 
 export
-class Game
+class Entity
 {
 protected:
 	string name_;
 public:
-	virtual void update(float elapsedSeconds) = 0;
-	virtual void draw() const = 0;
-	virtual void handleInput(SDL_Event * event ) = 0;
+	virtual void update(float elapsedSeconds) {};
+	virtual void draw() const {};
+	virtual void handleInput(SDL_Event * event ) {};
 	string getName() const
 	{
 		auto className = typeid(*this).name();
@@ -23,6 +22,6 @@ public:
 			className, 
 			name_.empty() ? "": " name=(" + name_ + ")");
 	}
-	virtual ~Game() = default;
+	virtual ~Entity() = default;
 
 };

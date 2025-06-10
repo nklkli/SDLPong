@@ -3,9 +3,9 @@ module;
 export module Pong;
 import Engine;
 import Actor;
-export import Game;
-export import Input;
+export import Entity;
 import std;
+import Ball;
 using std::string, std::unique_ptr, std::move, std::format, std::make_unique;
 
 
@@ -13,7 +13,7 @@ export class Pong;
 
 
 
-class GameState : public Game
+class GameState : public Entity
 {
 protected:
 	Pong* game_{ nullptr };
@@ -21,10 +21,7 @@ protected:
 public:
 	void setContext(Pong*);
 	// Inherited via Game
-	void update(float elapsedSeconds) override;
-	void draw() const override;
 
-	void handleInput(SDL_Event*) override;
 
 };
 
@@ -52,11 +49,10 @@ public:
 	// Inherited via GameState
 	void draw() const override;
 	~GameStateMenu() override;
-	inline void update(float elapsedSeconds) override;
 	void handleInput(SDL_Event*) override;;
 };
 
-class Pong final : public Game
+class Pong final : public Entity
 {
 
 	unique_ptr<Engine> engine_;
@@ -70,7 +66,7 @@ public:
 	static constexpr float PADDLE_RIGHT_X = 760;
 
 	float ai_offset{ 0 };
-	Actor ball{};
+	Ball ball{};
 
 	Pong(unique_ptr<Engine> engine);
 	const Engine& GetEngine() const;
@@ -114,20 +110,6 @@ void GameState::setContext(Pong* g)
 	game_ = g;
 }
 
-// Inherited via Game
-inline void GameState::update(float elapsedSeconds)
-{
-}
-
-inline void GameState::draw() const
-{
-}
-
-
-void GameState::handleInput(SDL_Event* event)
-{
-}
-
 
 void GameStatePlay::update(float elapsedSeconds)
 {
@@ -147,6 +129,7 @@ GameStatePlay::~GameStatePlay()
 
 void GameStatePlay::handleInput(SDL_Event* event)
 {
+
 }
 
 
@@ -237,11 +220,6 @@ inline void GameStateMenu::draw() const
 inline GameStateMenu::~GameStateMenu()
 {
 	println("{} dtor", getName());
-}
-
-void GameStateMenu::update(float elapsedSeconds)
-{
-
 }
 
 

@@ -20,8 +20,7 @@ public:
 	void drawText(const string& text, const Point& pos) const override;
 	void play(const string& sound) const override;
 	~SDLEngine() override;
-	float abs(float) const override;
-	float min(float, float) const override;
+	
 };
 
 
@@ -58,18 +57,5 @@ SDLEngine::~SDLEngine()
 	SDL_Log("SDLEngine dtor:");
 }
 
-float SDLEngine::abs(float x) const
-{
-	if (x >= 0)
-		return x;
-	else
-		return x * -1;
-
-}
-
-float SDLEngine::min(float x, float y) const
-{
-	return SDL_min(x, y);
-}
 
 

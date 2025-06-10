@@ -5,7 +5,7 @@ module;
 #include <SDL3/SDL_main.h>
 export module Main;
 import SDLGameAdapter;
-using std::format, std::println, std::string_view, std::string;
+using std::format, std::println, std::string;
 
 
 SDL_Window* window{ nullptr };
@@ -65,34 +65,13 @@ SDL_AppResult SDL_AppInit(void**, int argc, char* argv[])
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }
 
+
+
+
+
 /* This function runs when a new event (mouse input, keypresses, etc.) occurs. */
 SDL_AppResult SDL_AppEvent(void*, SDL_Event* event)
 {
-	if (event->type==SDL_EVENT_KEY_DOWN)
-	{
-		auto scancode =  SDL_GetScancodeName(event->key.scancode) ;
-		auto keycode =  SDL_GetKeyName(event->key.key) ;
-
-		//println("{0}, {1}", scancode, keycode);
-
-		println("SCANCODE: {0} {1:X}; KEYCODE: {2} {3:X}",
-			scancode,
-			 static_cast<Uint32>(event->key.scancode),
-			keycode,
-			 static_cast<Uint32>(event->key.key));
-
-		SDL_Keycode keycode2 = SDL_GetKeyFromScancode(
-			event->key.scancode,
-			event->key.mod, false);
-
-	/*	auto f= format(
-			"{0:c} {0:X}", 
-			keycode2 , keycode2);
-
-		println("{}", f);
-		*/
-	}
-
 	if (event->type == SDL_EVENT_QUIT ||
 		(event->type == SDL_EVENT_KEY_DOWN && event->key.scancode == SDL_SCANCODE_ESCAPE))
 	{
@@ -101,6 +80,8 @@ SDL_AppResult SDL_AppEvent(void*, SDL_Event* event)
 	SDLGameAdapter::handleInput(event);
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }
+
+
 
 /* This function runs once per frame, and is the heart of the program. */
 SDL_AppResult SDL_AppIterate(void*)
@@ -113,8 +94,10 @@ SDL_AppResult SDL_AppIterate(void*)
 	return SDL_APP_CONTINUE; /* carry on with the program! */
 }
 
+
+
 /* This function runs once at shutdown. */
-void SDL_AppQuit(void* appstate, SDL_AppResult result)
+void SDL_AppQuit(void* , SDL_AppResult result)
 {
 	SDLGameAdapter::quit();
 	SDL_Quit();
